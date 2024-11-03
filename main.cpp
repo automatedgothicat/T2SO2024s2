@@ -6,6 +6,7 @@ using namespace std;
 
 #define nfilosofos 5
 int garfos[nfilosofos] = { -1,-1,-1,-1,-1 };
+int refeicoes[nfilosofos] = {0};
 
 HANDLE MutexGarfos[nfilosofos];
 HANDLE MutexPrint;
@@ -15,7 +16,6 @@ void comer(int filo_id);
 void meditar(int filo_id);
 
 int main() {
-    /* -------------------- multithread -------------------- */ 
     for (int i = 0; i < nfilosofos; i++) {
 		MutexGarfos[i] = CreateMutex(NULL, FALSE, NULL);
 	}
@@ -28,6 +28,18 @@ int main() {
 
 	WaitForMultipleObjects(nfilosofos, vetorthreads, TRUE, INFINITE);
 
+    bool todosComeram;
+    do {
+        todosComeram = true;
+        for (int i = 0; i < nfilosofos; i++) {
+            if (refeicoes[i] == 0) {
+                todosComeram = false;
+                break;
+            }
+        }
+        Sleep(100);
+    } while (!todosComeram);
+
 	for (int i = 0; i < nfilosofos; i++) {
 		CloseHandle(vetorthreads[i]);
 		CloseHandle(MutexGarfos[i]);
@@ -39,7 +51,7 @@ int main() {
 }
 
 void jantar(int filo_id){
-    while(true) {
+    while(refeicoes[filo_id] == 0) {
         comer(filo_id);
         meditar(filo_id);
     }
@@ -80,6 +92,7 @@ void comer(int filo_id){
                 cout << filo_id << " filosofo soltou o garfo esquerdo" << endl;
                 ReleaseMutex(MutexPrint);
 
+                refeicoes[filo_id]++;
                 return;
             }
             garfos[esquerdo] = -1;
