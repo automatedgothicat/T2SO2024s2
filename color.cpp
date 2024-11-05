@@ -18,12 +18,15 @@ using namespace std;
 #define COR_MESA        "\033[38;5;101m"
 // para usar um texto de uma cor use: cout << COR_MUSGO << "O" << COR_RESET;
 
-void print_color(char* color, char* msg){
+void colorline(char* color, char* msg){
     cout << color << msg << COR_RESET << endl;
 }
 
+//maybe if we create a function that return a string like "color << msg << COR_RESET"
+//and then use it like cout << funcolor << int << "something" << endl
+
 int main(){
-    print_color(COR_VERMELHO,"Aviso");
     cout << "Funcionou de primeira hehehe" << endl;
+    colorline(COR_VERMELHO,"Aviso");
     return 0;
 }
